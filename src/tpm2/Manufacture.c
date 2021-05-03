@@ -89,6 +89,7 @@ TPM_Manufacture(
 
     // Initialize the context slot mask for UINT16
     s_ContextSlotMask = 0xffff;	// libtpms added
+    fprintf(stderr, "%s: Initialized s_ContextSlotMask: 0x%04x\n", __func__, s_ContextSlotMask);
 #if RUNTIME_SIZE_CHECKS
     // Call the function to verify the sizes of values that result from different
     // compile options.

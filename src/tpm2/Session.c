@@ -91,6 +91,7 @@ ContextIdSetOldest(
 		    if(CONTEXT_SLOT_MASKED(entry - lowBits) <= smallest)	// libtpms changed
 			{
 			    smallest = CONTEXT_SLOT_MASKED(entry - lowBits);	// libtpms changed
+			    fprintf(stderr, "%s: smallest: 0x%x  -> 0x%x\n", __func__, entry - lowBits, smallest);
 			    s_oldestSavedSession = i;
 			}
 		}
@@ -144,6 +145,7 @@ SessionStartup(
 
 	    // Initialize the context slot mask for UINT16
 	    s_ContextSlotMask = 0xffff;	// libtpms added
+            fprintf(stderr, "%s: Initialized s_ContextSlotMask: 0x%04x\n", __func__, s_ContextSlotMask);
 	}
     return TRUE;
 }
@@ -207,6 +209,8 @@ SequenceNumberForSavedContextIsValid(
     pAssert(s_ContextSlotMask == 0xff || s_ContextSlotMask == 0xffff); // libtpms added
 
     TPM_HANDLE           handle = context->savedHandle & HR_HANDLE_MASK;
+fprintf(stderr, "%s: MAX_CONTEXT_GAP = 0x%0lx\n", __func__, MAX_CONTEXT_GAP);
+fprintf(stderr, "%s: context->sequence = 0x%0lx\n", __func__, context->sequence);
     if(// Handle must be with the range of active sessions
        handle >= MAX_ACTIVE_SESSIONS
        // the array entry must be for a saved context
@@ -470,6 +474,7 @@ SessionContextSave(
     // contextID value.
     slotIndex = gr.contextArray[contextIndex] - 1;
     // Set the contextID for the contextArray
+fprintf(stderr, "%s: gr.contextCounter = 0x%0lx -> 0x%x\n", __func__, gr.contextCounter, CONTEXT_SLOT_MASKED(gr.contextCounter));
     gr.contextArray[contextIndex] = CONTEXT_SLOT_MASKED(gr.contextCounter); // libtpms changed
     // Increment the counter
     gr.contextCounter++;
@@ -531,6 +536,7 @@ SessionContextLoad(
     contextIndex = *handle & HR_HANDLE_MASK;   // extract the index
     // If there is only one slot left, and the gap is at maximum, the only session
     // context that we can safely load is the oldest one.
+fprintf(stderr, "%s: gr.contextCounter & s_contextSlotMask: 0x%x\n", __func__, CONTEXT_SLOT_MASKED(gr.contextCounter));
     if(s_oldestSavedSession < MAX_ACTIVE_SESSIONS
        && s_freeSessionSlots == 1
        && CONTEXT_SLOT_MASKED(gr.contextCounter) == gr.contextArray[s_oldestSavedSession] // libtpms changed

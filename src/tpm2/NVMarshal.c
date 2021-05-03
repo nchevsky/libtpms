@@ -1325,6 +1325,7 @@ STATE_RESET_DATA_Unmarshal(STATE_RESET_DATA *data, BYTE **buffer, INT32 *size)
                 }
             }
         }
+        fprintf(stderr, "%s: Initialized s_ContextSlotMask to 0x%04x\n", __func__, s_ContextSlotMask);
     }
     if (rc == TPM_RC_SUCCESS) {
         rc = UINT64_Unmarshal(&data->contextCounter, buffer, size);
